@@ -1,0 +1,57 @@
+resources:
+  jobs:
+    forecasting_job_gp:
+      name: forecasting_job_gp
+      tasks:
+        - task_key: compute_actual_file_date
+          notebook_task:
+            notebook_path: ts_forecasting/schedule/compute_file_date
+            source: GIT
+          min_retry_interval_millis: 900000
+          disable_auto_optimization: true
+          email_notifications:
+            on_failure:
+              - <your_email>
+        - task_key: data_extract
+          depends_on:
+            - task_key: compute_actual_file_date
+          notebook_task:
+            notebook_path: ts_forecasting/data_extraction
+            base_parameters:
+              file_date: "{{tasks.compute_actual_file_date.values.file_date}}"
+            source: GIT
+          min_retry_interval_millis: 900000
+          disable_auto_optimization: true
+          email_notifications:
+            on_failure:
+              - <your_email>
+        - task_key: forecast
+          depends_on:
+            - task_key: data_extract
+          notebook_task:
+            notebook_path: ts_forecasting/forecast
+            base_parameters:
+              file_date: "{{tasks.compute_actual_file_date.values.file_date}}"
+            source: GIT
+          min_retry_interval_millis: 900000
+          disable_auto_optimization: true
+          email_notifications:
+            on_failure:
+              - <your_email>
+        - task_key: job_successful
+          depends_on:
+            - task_key: forecast
+          condition_task:
+            op: EQUAL_TO
+            left: "{{tasks.forecast.result_state}}"
+            right: success
+          email_notifications:
+            on_success:
+              - <your_email>
+      git_source:
+        git_url: https://github.com/prh86/dbx_tests
+        git_provider: gitHub
+        git_branch: main
+      queue:
+        enabled: true
+      performance_target: STANDARD

@@ -5,7 +5,7 @@
 
 ## File e cartelle:
 
-- **setup/**  
+- **/setup/**  
   Notebook di setup:
   - `catalog_prepare`: per creare l'alberatura di catalogo/schema/volumi
   - `generate_data`: per creare dati di input. Crea dati storici daily, tra una `start_date` e una `end_date`. Tipicamente, lo lanci almeno due volte con stessa `start_date` ma diversa `end_date`: una prima volta per creare un file su cui si farà training (es. `dato_input_2025-07-25.csv`), e una seconda volta per creare un file con dati più aggiornati (es. `dato_input_2025-08-18.csv`) per fare forecast.
@@ -15,7 +15,7 @@
     Verranno in seguito  aggiunti controlli sul fatto che la data nel nome corrisponda a quella massima della serie, perciò il nome del file di output è stato lasciato editabile in questo notebook.
 
 
-- **src/**  
+- **/src/**  
   Moduli Python richiamati nei notebook. 
 
 - **/**
@@ -27,8 +27,9 @@
   
   NB: Per questi notebook, il parametro principale è la `file_date`, che corrisponde alla massima data contenuta nel file da lavorare.
 
-## Job
-Ci sono due job:
--  **forecast_job**: per il forecasting (tipicamente giornaliero).
--  **train_job**: per il training (tipicamente periodico).
+- **/jobs/**
+
+  contiene il .yml di due job:
+  -  **forecasting_job**: per il forecasting (tipicamente giornaliero).
+  -  **training_job**: per il training (tipicamente periodico).
 
